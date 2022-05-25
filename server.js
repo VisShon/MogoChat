@@ -37,7 +37,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,db){
 
     //connect to socket.io
     io.on('connection',function(socket){
-        let chat = db.collections('chat');
+        let chat = db.collections('Chat');
 
         //funcrtion to send and update status
         function sendStatus(s){
