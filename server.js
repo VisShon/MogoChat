@@ -4,7 +4,11 @@ const { Server } = require('socket.io');
 
 //start a new socket.io server and listen on port 4000
 const PORT = 4000;
-const io = new Server();
+const io = new Server({
+    cors: {
+      origin: "*"
+    }
+});
 io.listen(PORT);
 
 
@@ -27,7 +31,8 @@ io.listen(PORT);
 
 
 //connect to your mongo db on the mongo URl, the callback function returns the db
-mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,db){
+mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
+    db = client.db('MongoChat');
     if(err){
         throw err;
     }2
@@ -37,7 +42,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,db){
 
     //connect to socket.io
     io.on('connection',function(socket){
-        let chat = db.collections('Chat');
+        let chat = db.collection('Chat');
 
         //funcrtion to send and update status
         function sendStatus(s){
@@ -65,10 +70,12 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,db){
                 sendStatus('Please enter a UserName and a Message');
             }else{
 
+                socket.on('send',function(data){
 
-                //Insert message into the database
-                chat.insert({name:name,content:content}, function(){
-                    socket.emit('output', message);
+                    //Insert message into the database
+                    chat.insert({name:name,content:content}, function(){
+                        socket.emit('output', message);
+                    });
                 });
 
                 //send message sent status to the server
