@@ -1,7 +1,6 @@
 {
   "name": "mogochat",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -11,5 +10,14 @@
   "dependencies": {
     "mongodb": "^4.6.0",
     "socket.io": "^4.5.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VisShon/MogoChat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/VisShon/MogoChat/issues"
+  },
+  "homepage": "https://github.com/VisShon/MogoChat#readme",
+  "description": ""
 }
