@@ -22,10 +22,11 @@
             
             <input id='username' class="form form-control" placeholder="Enter Username">
             
+            <div id="status" class="fw-semibold  border-top-0  border-success">
+                
+            </div>
             <div id="card" class='border border-success'>
-                <div id="status" class="fw-semibold  border-top-0  border-success"></div>
-                <div id="mssgcard" class="border">
-                    
+                <div id="mssgcard" class="card-block">
                 </div>
             </div>
 
@@ -72,61 +73,76 @@
     <script>
         (function(){
             var status = document.getElementById('status');
-            var message = document.getElementById('mssgcard');
+            var messages = document.getElementById('mssgcard');
             var text = document.getElementById('text');
             var username = document.getElementById('username');
             var clear = document.getElementById('clear');
             var send = document.getElementById('send');
 
+            //Handling Status
+            var defaultStatus = status.textContent;
+
+            function setStatus(s) {
+                status.textContent = s;
+                if(s!=defaultStatus){
+                    var delay = setTimeout(function(){
+                        setStatus(defaultStatus);
+                    },2000);
+                }
+            }
+
+            //Connect from the client
+            var socket = io.connect('http://127.0.0.1:4000')
+            if(socket !== undefined){
+                console.log('connected...');
+
+                //Handling message output from the server
+                socket.on('output', function(data){
+                    console.log(data);
+                    //Compile the message to be sent
+                    var i=0;
+                    if(data.length){
+                        for(;i<data.length;i++){
+                            var message = document.createElement('div');
+                            // message.setAttribute('class', 'chat-message');
+                            message.textContent = data[i].name+': '+data[i].content;
+                            messages.appendChild(message);
+                            messages.insertBefore(message, messages.firstChild);
+                        }
+                    }
+                });
+
+
+                //Handling status from the server
+                socket.on('status', function(data){
+                    if(typeof data === 'object'){
+                        setStatus(data.message);
+                    }
+                    else{
+                        setStatus(data);
+                    }
+
+                    //clear text area
+                    if(data.clear){
+                        text.value = '';
+                    }
+                });
+
+                //handling input
+                send.addEventListener('click',function(){
+                    socket.emit('input',{
+                        name:username.value,
+                        content:text.value
+                    });
+                    event.preventDefault();
+                })
+
+                // Handle Chat Clear
+                clear.addEventListener('click', function(){
+                    socket.emit('clear');
+                });
+            }
 
         })();
-
-        //Handling Status
-        var defaultStatus = status.textContent;
-        function setStatus(s) {
-            status.textContent = s;
-            if(s!=defaultStatus){
-                var delay = setTimeout(function(){
-                    setStatus(defaultStatus);
-                },4000);
-            }
-        }
-
-        //Connect from the client
-        var socket = io.connect('http://127.0.0.1:4000')
-        if(socket !== undefined){
-            console.log('connected...');
-
-            //Handling message output from the server
-            socket.on('output', function(data){
-                //Compile the message to be sent
-                if(data.length){
-                    for(var i=0;i<data.length;i++){
-                        var message = document.createElement('div');
-                        // message.setAttribute('class', 'chat-message');
-                        message.textContent = data[i].name+': '+data[i].content;
-                        message.appendChild(message);
-                        message.insertBefore(message, message.firstChild);
-                    }
-                }
-            });
-
-
-            //Handling status from the server
-            socket.on('status', function(data){
-                setStatus(data.message);
-                if(data.clear){
-                    text.value = '';
-                }
-            });
-
-            // Handle Chat Clear
-            clear.addEventListener('click', function(){
-                        socket.emit('clear');
-            });
-
-            
-
-        }
     </script>
 </html>

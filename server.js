@@ -9,9 +9,7 @@ const io = new Server({
       origin: "*"
     }
 });
-io.listen(PORT);
-
-
+io.listen(PORT).sockets;
 
 // server-side
 // io.on("connection", (socket) => {
@@ -35,7 +33,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
     db = client.db('MongoChat');
     if(err){
         throw err;
-    }2
+    }
     
     //connected successfully
     console.log('Mongo Connected...');
@@ -50,7 +48,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
         }
 
         //retrieve chats form your db
-        chat.find().limit().sort({_id:1}).toArray(function(err,res){
+        chat.find().limit(100).sort({_id:1}).toArray(function(err,res){
             if(err){
                 throw err;
             }
@@ -69,15 +67,11 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
             if(name==''||content==''){
                 sendStatus('Please enter a UserName and a Message');
             }else{
-
-                socket.on('send',function(data){
-
-                    //Insert message into the database
-                    chat.insert({name:name,content:content}, function(){
-                        socket.emit('output', message);
-                    });
+                console.log('sent');
+                //Insert message into the database
+                chat.insertOne({name:name,content:content}, function(){
+                    io.emit('output', message);
                 });
-
                 //send message sent status to the server
                 sendStatus({message: 'Message Sent', clear:true});
             }
@@ -85,7 +79,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
 
         //On clear
         socket.on('clear', function(data){
-            chat.remove({},function(){
+            chat.deleteMany({},function(){
                 //Emit cleared message
                 socket.emit('cleared')
             });
