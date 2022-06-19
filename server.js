@@ -54,7 +54,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
             }
             
             //emits the message passed to the callback functions.
-            io.emit('output', res);
+            socket.emit('output', res);
         });
 
         //Recieve message from the client to the server
@@ -70,7 +70,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
                 console.log('sent');
                 //Insert message into the database
                 chat.insertOne({name:name,content:content}, function(){
-                    io.emit('output', message);
+                    socket.broadcast.emit('output', message);
                     
                 });
                 //send message sent status to the server
