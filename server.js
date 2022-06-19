@@ -54,7 +54,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
             }
             
             //emits the message passed to the callback functions.
-            socket.emit('output', res);
+            io.emit('output', res);
         });
 
         //Recieve message from the client to the server
@@ -71,6 +71,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
                 //Insert message into the database
                 chat.insertOne({name:name,content:content}, function(){
                     io.emit('output', message);
+                    
                 });
                 //send message sent status to the server
                 sendStatus({message: 'Message Sent', clear:true});
@@ -81,8 +82,12 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
         socket.on('clear', function(data){
             chat.deleteMany({},function(){
                 //Emit cleared message
-                socket.emit('cleared')
+                io.emit('cleared')
             });
+        });
+
+        socket.on('UpdateOnDatabase', function(){
+            io.emit('RefreshPage');
         });
     });
 });
