@@ -52,7 +52,6 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
             if(err){
                 throw err;
             }
-            
             //emits the message passed to the callback functions.
             socket.emit('output', res);
         });
@@ -86,6 +85,8 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
             });
         });
 
+
+        //Handling Updates
         socket.on('UpdateOnDatabase', function(){
             io.emit('RefreshPage');
         });
