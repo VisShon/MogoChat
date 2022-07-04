@@ -1,9 +1,9 @@
 //include module for socket.io and mongo db
 const mongo = require('mongodb').MongoClient;
 const { Server } = require('socket.io');
-
+const dotenv = require('dotenv').config();
 //start a new socket.io server and listen on port 4000
-const PORT = 4000;
+const PORT = 5500;
 const io = new Server({
     cors: {
       origin: "*"
@@ -29,8 +29,8 @@ io.listen(PORT).sockets;
 
 
 //connect to your mongo db on the mongo URl, the callback function returns the db
-mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
-    db = client.db('MongoChat');
+mongo.connect(process.env.MONGODB,function(err,client){
+    let db = client.db('MongoChat');
     if(err){
         throw err;
     }
@@ -40,7 +40,7 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
 
     //connect to socket.io
     io.on('connection',function(socket){
-        let chat = db.collection('Chat');
+        let chat = db.collection('chats');
 
         //funcrtion to send and update status
         function sendStatus(s){
@@ -69,11 +69,10 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
                 console.log('sent');
                 //Insert message into the database
                 chat.insertOne({name:name,content:content}, function(){
-                    socket.broadcast.emit('output', message);
-                    
+                    io.emit('output', [message]);
+                    sendStatus({message: 'Message Sent', clear:false});
                 });
                 //send message sent status to the server
-                sendStatus({message: 'Message Sent', clear:true});
             }
         });
 
@@ -82,13 +81,9 @@ mongo.connect('mongodb://127.0.0.1/MongoChat',function(err,client){
             chat.deleteMany({},function(){
                 //Emit cleared message
                 io.emit('cleared')
+                sendStatus({message: 'Cleared', clear:true});
             });
         });
 
-
-        //Handling Updates
-        socket.on('UpdateOnDatabase', function(){
-            io.emit('RefreshPage');
-        });
     });
 });

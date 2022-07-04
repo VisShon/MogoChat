@@ -93,7 +93,7 @@
             }
 
             //Connect from the client
-            var socket = io.connect('http://127.0.0.1:4000')
+            var socket = io.connect('http://127.0.0.1:5500')
             if(socket !== undefined){
                 console.log('connected...');
 
@@ -125,7 +125,7 @@
 
                     //clear text area
                     if(data.clear){
-                        text.value = '';
+                        messages.textContent = '';
                     }
                 });
 
@@ -135,19 +135,14 @@
                         name:username.value,
                         content:text.value
                     });
-                    socket.emit('UpdateOnDatabase');
                     event.preventDefault();
                 })
 
                 // Handle Chat Clear
                 clear.addEventListener('click', function(){
                     socket.emit('clear');
-                    socket.emit('UpdateOnDatabase');
                 });
 
-                socket.on('RefreshPage', function () {
-                    location.reload();
-                });
             }
 
         })();
