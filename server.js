@@ -91,6 +91,6 @@ mongo.connect(process.env.MONGODB,function(err,client){
     });
 });
 
-server.listen(process.env.PORT||4000,()=>{
-    console.log('listening on port...')
+server.listen(PORT,()=>{
+    console.log(`listening on ${PORT}`)
 });
