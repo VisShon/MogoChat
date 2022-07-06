@@ -1,1 +1,1 @@
-worker:node serer.js
+web:node serer.js
