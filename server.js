@@ -9,9 +9,6 @@ const { Server } = require('socket.io');
 const dotenv = require('dotenv').config();
 const path = require('path');
 
-
-//start a new socket.io server and listen on port 4000
-const PORT = process.env.PORT || 4000;
 const io = new Server(server);
 // server-side
 // io.on("connection", (socket) => {
@@ -94,6 +91,6 @@ mongo.connect(process.env.MONGODB,function(err,client){
     });
 });
 
-server.listen(PORT,()=>{
-    console.log(`listening on ${PORT}`)
+server.listen(process.env.PORT||4000,()=>{
+    console.log('listening on port...')
 });
