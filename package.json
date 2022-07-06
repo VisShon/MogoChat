@@ -7,7 +7,7 @@
     "npm":"8.x"
   },
   "scripts": {
-    "start": "npm install && node server.js",
+    "start": "node server.js",
     "build": "npm install"
   },
   "author": "",
