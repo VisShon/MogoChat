@@ -1,16 +1,18 @@
 //include module for socket.io and mongo db
+const express = require("express");
+const http = require('http');
+const app = express();
+const server = http.createServer(app);
 const mongo = require('mongodb').MongoClient;
 const { Server } = require('socket.io');
-const dotenv = require('dotenv').config();
-//start a new socket.io server and listen on port 4000
-const PORT = 5500;
-const io = new Server({
-    cors: {
-      origin: "*"
-    }
-});
-io.listen(PORT).sockets;
 
+const dotenv = require('dotenv').config();
+const path = require('path');
+
+
+//start a new socket.io server and listen on port 4000
+const PORT = process.env.PORT || 4000;
+const io = new Server(server);
 // server-side
 // io.on("connection", (socket) => {
 //     socket.emit("hello", "world");
@@ -27,6 +29,10 @@ io.listen(PORT).sockets;
 //   });
 // socket.emit("hello", "world");
 
+app.use(express.static(path.join(__dirname, './')))
+app.get('*', (req, res)=>{
+    res.sendFile(path.resolve(__dirname, './','index.html'));
+})
 
 //connect to your mongo db on the mongo URl, the callback function returns the db
 mongo.connect(process.env.MONGODB,function(err,client){
@@ -86,4 +92,8 @@ mongo.connect(process.env.MONGODB,function(err,client){
         });
 
     });
+});
+
+server.listen(PORT,()=>{
+    console.log(`listening on ${PORT}`)
 });
