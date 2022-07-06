@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "npm install && node server.js"
+    "start": "npm install && node server.js",
+    "build": "npm install && node server.js"
   },
   "author": "",
   "license": "ISC",
