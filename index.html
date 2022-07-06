@@ -93,7 +93,7 @@
             }
 
             //Connect from the client
-            var socket = io.connect('https://mongochatdb.herokuapp.com/')
+            var socket = io.connect(window.location.href)
             if(socket !== undefined){
                 console.log('connected...');
 
