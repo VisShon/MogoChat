@@ -8,7 +8,7 @@ const { Server } = require('socket.io');
 
 const dotenv = require('dotenv').config();
 const path = require('path');
-
+const PORT = process.env.PORT || 3000;
 const io = new Server(server);
 // server-side
 // io.on("connection", (socket) => {
