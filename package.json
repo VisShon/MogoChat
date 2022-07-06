@@ -2,6 +2,10 @@
   "name": "mogochat",
   "version": "1.0.0",
   "main": "server.js",
+  "engines": {
+    "node": "16.x",
+    "npm":"8.x"
+  },
   "scripts": {
     "start": "npm install && node server.js",
     "build": "npm install && node server.js"
